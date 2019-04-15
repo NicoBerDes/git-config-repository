@@ -1,0 +1,31 @@
+zuul:
+  host:
+    connect-timeout-millis: 20000
+    socket-timeout-millis: 60000
+  prefix: /api
+  striprefix: true
+  ignoredServices: '*'
+  routes:
+    price:
+      path: /getprice/**
+      serviceId: PRICEART-SERVER
+      sensitive-headers: Cookie,Set-Cookie
+
+hystrix:
+  command:
+    PRICEART-SERVER:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+PRICEART-SERVER:
+  ribbon:
+    NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
+    listOfServers: http://localhost:5071,http://localhost:5072
+    ReadTimeout: 60000
+    ConnectTimeout: 20000
+    MaxTotalHttpConnections: 500
+    MaxConnectionPerHost: 100
+    eureka:
+      enabled: false
